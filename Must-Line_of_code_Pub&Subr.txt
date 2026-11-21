@@ -35,7 +35,7 @@ python
 self.subscription = self.create_subscription(String, 'chatter', self.listener_callback, 10)
 
 
-For a subscriber, a callback function is strictly compulsory; for a publisher, it is not.
+For a Subscriber, a callback function is strictly compulsory; for a publisher, it is not.
 The requirement comes down to how data flows in ROS 2:
 • Subscribers are event-driven: You don't know when a message will arrive, so ROS 2 requires a callback function to execute the moment data hits the topic.
 • Publishers are action-driven: You decide when to send data, so you only need a callback if you are using a timer to automate publishing.
@@ -47,6 +47,13 @@ Even if you want your subscriber to do nothing with the incoming data (for examp
 python
 self.subscription = self.create_subscription(String, 'chatter', lambda msg: None, 10)
 
+
+The subscriber itself is just the "ear" listening to the channel, while the callback function is the action the subscriber takes to process or react to whatever the publisher just sent.
+Here is the simplest way to picture that exact division of labor:
+• The Publisher sends the information (e.g., "Turn Left").
+• The Subscriber is the connection listening to the topic.
+• The Callback Function is the action that actually reads "Turn Left" and turns the robot's wheels.
+Without the callback function, the subscriber would receive the message from the publisher and have no instructions on what to do with it.
 
 
 
