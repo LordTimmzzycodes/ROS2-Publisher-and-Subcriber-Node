@@ -1,0 +1,54 @@
+Must-Line of code for Creating a Publisher&Subcriber (Node)
+
+To function as a ROS 2 node, your code must inherit from (or instantiate) 
+    rclpy.init(args=args)   the Node class and run rclpy.spin() (in Python) or rclcpp::spin() (in C++) to keep the node alive and processing events.
+
+Without instantiating a Node object, ROS 2 will not recognize the program on the network. Without spin(), the program will execute its setup lines and immediately exit before it can send or receive any data.
+
+
+What Each Essential Line Does
+
+• init(): Starts the underlying DDS middleware so your program can discover other nodes on the network.
+• Node('name'): Registers the entity on the ROS 2 graph. Once this line runs, your node becomes visible when you run ros2 node list in the terminal.
+• spin(): Enters an infinite loop that listens for incoming messages, timers, or service requests. Without this, your node dies in a fraction of a second.
+• shutdown(): Releases system resources and cleanly removes the node from the network when you press Ctrl+C.
+
+
+For Publisher & Subcriber
+
+To make a Python node a publisher or subscriber in ROS 2, you must call self.create_publisher() or self.create_subscription() inside your Node class.
+
+
+The Essential Publisher Line
+
+To publish data, you create a publisher object inside your node's __init__ method and use .publish() to send messages:
+python
+# Syntax: self.create_publisher(MessageType, 'topic_name', queue_size)
+self.publisher_ = self.create_publisher(String, 'chatter', 10)
+
+
+
+The Essential Subscriber Line
+To receive data, you create a subscription object and link it to a callback function that runs automatically every time a new message arrives:
+python
+# Syntax: self.create_subscription(MessageType, 'topic_name', callback_function, queue_size)
+self.subscription = self.create_subscription(String, 'chatter', self.listener_callback, 10)
+
+
+For a subscriber, a callback function is strictly compulsory; for a publisher, it is not.
+The requirement comes down to how data flows in ROS 2:
+• Subscribers are event-driven: You don't know when a message will arrive, so ROS 2 requires a callback function to execute the moment data hits the topic.
+• Publishers are action-driven: You decide when to send data, so you only need a callback if you are using a timer to automate publishing.
+
+1. Subscriber: Callback is Compulsory
+
+When you call self.create_subscription(), the third argument must be a callable function. If you omit it or pass None, Python will throw a TypeError immediately.
+Even if you want your subscriber to do nothing with the incoming data (for example, just keeping a topic connection alive), you still must provide an empty callback:
+python
+self.subscription = self.create_subscription(String, 'chatter', lambda msg: None, 10)
+
+
+
+
+
+
